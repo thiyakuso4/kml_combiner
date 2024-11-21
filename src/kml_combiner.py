@@ -1,7 +1,7 @@
 import streamlit as st
 import fiona
 import geopandas as gpd
-
+import tempfile
 from shapely.ops import unary_union
 
 # Add KML and LIBKML driver if not present
@@ -65,8 +65,13 @@ if inclusion_file and exclusion_file:
                 
                 
                 # Save the result to a KML file
-                output_path = "combined.kml"
-                inclusion_gdf.to_file(output_path, driver="KML")
+                # output_path = "combined.kml"
+                # inclusion_gdf.to_file(output_path, driver="KML")
+                
+                # Create a unique temporary file path for output KML to avoid conflicts
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".kml") as tmpfile:
+                    output_path = tmpfile.name
+                    inclusion_gdf.to_file(output_path, driver="KML")
                 
                 # Allow user to download the combined KML
                 with open(output_path, "rb") as f:
